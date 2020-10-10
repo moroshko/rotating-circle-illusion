@@ -45,7 +45,7 @@ function App() {
   const centerPoint = getCenterPoint(linesData);
 
   useEffect(() => {
-    setSvgSize(containerRef.current.getBoundingClientRect().width * 0.8);
+    setSvgSize(containerRef.current.getBoundingClientRect().width * 0.7);
   }, []);
 
   useEffect(() => {
