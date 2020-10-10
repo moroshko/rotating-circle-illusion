@@ -176,66 +176,70 @@ function App() {
           </svg>
           <div className={styles.controls}>
             <div className={styles.control}>
-              <label className={styles.controlLabel} htmlFor="linesCount">
-                Lines count:
-              </label>
-              <StepButton
-                isPlus={false}
-                disabled={linesCount === 0}
-                onClick={() => {
-                  setLinesCount((linesCount) => linesCount - 1);
-                }}
-              />
-              <div className={styles.stepValue}>{linesCount}</div>
-              <StepButton
-                isPlus={true}
-                disabled={linesCount === maxLinesCount}
-                onClick={() => {
-                  setLinesCount((linesCount) => linesCount + 1);
-                }}
-              />
+              <label className={styles.controlLabel}>Lines count:</label>
+              <div className={styles.controlInputs}>
+                <StepButton
+                  isPlus={false}
+                  disabled={linesCount === 0}
+                  onClick={() => {
+                    setLinesCount((linesCount) => linesCount - 1);
+                  }}
+                />
+                <div className={styles.stepValue}>{linesCount}</div>
+                <StepButton
+                  isPlus={true}
+                  disabled={linesCount === maxLinesCount}
+                  onClick={() => {
+                    setLinesCount((linesCount) => linesCount + 1);
+                  }}
+                />
+              </div>
             </div>
             <div className={styles.control}>
-              <label className={styles.controlLabel} htmlFor="speed">
-                Speed:
-              </label>
-              <StepButton
-                isPlus={false}
-                disabled={speedValue === 0}
-                onClick={() => {
-                  setSpeedValue((speedValue) => speedValue - 1);
-                }}
-              />
-              <div className={styles.stepValue}>{speedValue + 1}</div>
-              <StepButton
-                isPlus={true}
-                disabled={speedValue === 9}
-                onClick={() => {
-                  setSpeedValue((speedValue) => speedValue + 1);
-                }}
-              />
+              <label className={styles.controlLabel}>Speed:</label>
+              <div className={styles.controlInputs}>
+                <StepButton
+                  isPlus={false}
+                  disabled={speedValue === 0}
+                  onClick={() => {
+                    setSpeedValue((speedValue) => speedValue - 1);
+                  }}
+                />
+                <div className={styles.stepValue}>{speedValue + 1}</div>
+                <StepButton
+                  isPlus={true}
+                  disabled={speedValue === 9}
+                  onClick={() => {
+                    setSpeedValue((speedValue) => speedValue + 1);
+                  }}
+                />
+              </div>
             </div>
             <div className={styles.control}>
               <label className={styles.controlLabel} htmlFor="showCenter">
                 Show center?
               </label>
-              <ToggleInput
-                id="showCenter"
-                disabled={linesCount < 2}
-                checked={showCenter}
-                onChange={setShowCenter}
-              />
+              <div className={styles.controlInputs}>
+                <ToggleInput
+                  id="showCenter"
+                  disabled={linesCount < 2}
+                  checked={showCenter}
+                  onChange={setShowCenter}
+                />
+              </div>
             </div>
             <div className={styles.control}>
               <label className={styles.controlLabel} htmlFor="differentColors">
                 Different colors?
               </label>
-              <ToggleInput
-                id="differentColors"
-                disabled={linesCount < 2}
-                checked={hasDifferentColors}
-                onChange={setHasDifferentColors}
-              />
+              <div className={styles.controlInputs}>
+                <ToggleInput
+                  id="differentColors"
+                  disabled={linesCount < 2}
+                  checked={hasDifferentColors}
+                  onChange={setHasDifferentColors}
+                />
+              </div>
             </div>
           </div>
         </>

@@ -16,8 +16,13 @@
 }
 .h1 {
   margin: 0;
-  font-size: 28px;
+  font-size: 26px;
   user-select: none;
+}
+@media (min-width: 376px) {
+  .h1 {
+    font-size: 28px;
+  }
 }
 .githubLink {
   display: flex;
@@ -30,11 +35,11 @@
   display: flex;
   flex-direction: column;
   margin-top: 24px;
-  padding-left: 30px;
 }
 .control {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 .control:not(:first-of-type) {
   margin-top: 32px;
@@ -42,6 +47,11 @@
 .controlLabel {
   width: 180px;
   user-select: none;
+}
+.controlInputs {
+  display: flex;
+  align-items: center;
+  width: 140px;
 }
 .stepValue {
   width: 60px;
