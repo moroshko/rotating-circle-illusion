@@ -56,4 +56,5 @@
 .stepValue {
   width: 60px;
   text-align: center;
+  user-select: none;
 }
