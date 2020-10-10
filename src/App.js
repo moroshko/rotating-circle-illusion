@@ -1,57 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import randomColor from "random-color";
 import "../node_modules/focus-visible/dist/focus-visible.min.js";
-import RangeInput from "./RangeInput";
+import StepButton from "./StepButton";
 import ToggleInput from "./ToggleInput";
-import { range } from "./utils";
+import { range, getPoint, getCenterPoint, getProjectionPoint } from "./utils";
 import styles from "./App.module.css";
-
-function getPoint({ radius, radians }) {
-  return {
-    x: radius * Math.cos(radians),
-    y: -radius * Math.sin(radians),
-  };
-}
-
-function getProjectionPoint({ radius, point, p1 }) {
-  if (p1.x === 0) {
-    return {
-      x: 0,
-      y: point.y,
-    };
-  }
-
-  const m = p1.y / p1.x;
-  const x = (m * point.y + point.x) / (1 + m * m);
-
-  return {
-    x,
-    y: m * x,
-  };
-}
-
-function getCenterPoint(linesData) {
-  const pointsCount = linesData.length;
-
-  if (pointsCount < 2) {
-    return null;
-  }
-
-  let sumX = 0;
-  let sumY = 0;
-
-  for (let i = 0; i < pointsCount; i++) {
-    const { projection } = linesData[i];
-
-    sumX += projection.x;
-    sumY += projection.y;
-  }
-
-  return {
-    x: sumX / pointsCount,
-    y: sumY / pointsCount,
-  };
-}
 
 function App() {
   const [svgSize, setSvgSize] = useState(null);
@@ -60,7 +13,9 @@ function App() {
   const pointRadius = pointSize / 2;
   const viewBox = `-${svgSize / 2} -${svgSize / 2} ${svgSize} ${svgSize}`;
   const radius = svgSize / 2 - pointRadius;
-  const [radians, setRadians] = useState(0);
+  const radiansOnLastSpeedChange = useRef(0);
+  const [radians, setRadians] = useState(radiansOnLastSpeedChange.current);
+  const radiansRef = useRef(radians);
   const point = getPoint({ radius, radians });
   const [linesCount, setLinesCount] = useState(1);
   const maxLinesCount = 36;
@@ -68,6 +23,8 @@ function App() {
   const [speedValue, setSpeedValue] = useState(0);
   const [hasDifferentColors, setHasDifferentColors] = useState(false);
   const speed = (10 - speedValue) * 1000; // ms to complete full circle
+  const speedRef = useRef(speed);
+  const prevSpeedRef = useRef(speedRef.current);
   const rafRef = useRef();
   const randomColorsRef = useRef();
   const linesData = range(0, linesCount - 1).map((k) => {
@@ -75,7 +32,6 @@ function App() {
     const p1 = getPoint({ radius, radians: p1radians });
     const p2 = getPoint({ radius, radians: p1radians + Math.PI });
     const projection = getProjectionPoint({
-      radius,
       point,
       p1,
     });
@@ -98,6 +54,13 @@ function App() {
     );
   }, [maxLinesCount]);
 
+  // This is to avoid cancelling and restarting the animation frame
+  // every time the speed or the radians change.
+  useEffect(() => {
+    speedRef.current = speed;
+    radiansRef.current = radians;
+  });
+
   useEffect(() => {
     let startTime;
 
@@ -106,7 +69,16 @@ function App() {
         startTime = time;
       }
 
-      setRadians((2 * Math.PI * (time - startTime)) / speed);
+      if (speedRef.current !== prevSpeedRef.current) {
+        radiansOnLastSpeedChange.current = radiansRef.current;
+        prevSpeedRef.current = speedRef.current;
+        startTime = time;
+      }
+
+      setRadians(
+        radiansOnLastSpeedChange.current +
+          (2 * Math.PI * (time - startTime)) / speedRef.current
+      );
 
       rafRef.current = requestAnimationFrame(animate);
     }
@@ -116,7 +88,7 @@ function App() {
     return () => {
       cancelAnimationFrame(rafRef.current);
     };
-  }, [radius, speed]);
+  }, []);
 
   return (
     <div className={styles.container} ref={containerRef}>
@@ -207,34 +179,41 @@ function App() {
               <label className={styles.controlLabel} htmlFor="linesCount">
                 Lines count:
               </label>
-              <div className={styles.rangeInput}>
-                <RangeInput
-                  min={0}
-                  max={maxLinesCount}
-                  value={linesCount}
-                  onChange={(newLinesCount) => {
-                    setLinesCount(newLinesCount);
-
-                    if (newLinesCount < 2) {
-                      setShowCenter(false);
-                      setHasDifferentColors(false);
-                    }
-                  }}
-                />
-              </div>
+              <StepButton
+                isPlus={false}
+                disabled={linesCount === 0}
+                onClick={() => {
+                  setLinesCount((linesCount) => linesCount - 1);
+                }}
+              />
+              <div className={styles.stepValue}>{linesCount}</div>
+              <StepButton
+                isPlus={true}
+                disabled={linesCount === maxLinesCount}
+                onClick={() => {
+                  setLinesCount((linesCount) => linesCount + 1);
+                }}
+              />
             </div>
             <div className={styles.control}>
               <label className={styles.controlLabel} htmlFor="speed">
                 Speed:
               </label>
-              <div className={styles.rangeInput}>
-                <RangeInput
-                  min={0}
-                  max={9}
-                  value={speedValue}
-                  onChange={setSpeedValue}
-                />
-              </div>
+              <StepButton
+                isPlus={false}
+                disabled={speedValue === 0}
+                onClick={() => {
+                  setSpeedValue((speedValue) => speedValue - 1);
+                }}
+              />
+              <div className={styles.stepValue}>{speedValue + 1}</div>
+              <StepButton
+                isPlus={true}
+                disabled={speedValue === 9}
+                onClick={() => {
+                  setSpeedValue((speedValue) => speedValue + 1);
+                }}
+              />
             </div>
             <div className={styles.control}>
               <label className={styles.controlLabel} htmlFor="showCenter">

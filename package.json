@@ -1,6 +1,6 @@
 {
   "name": "rotating-circle-illusion",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -26,7 +26,6 @@
     "random-color": "^1.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-range": "^1.7.0",
     "react-scripts": "3.4.3",
     "react-switch": "^5.0.1"
   },
